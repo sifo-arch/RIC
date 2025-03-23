@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 
 class BinNeuralNetwork:
@@ -62,6 +63,14 @@ class BinNeuralNetwork:
         weights getter
         """
         return self._weights
+    
+
+    @property
+    def biases(self):
+        """
+        biases getter
+        """
+        return self._biases
     
 
     def _sigmoid(self, x):
@@ -177,7 +186,7 @@ class BinNeuralNetwork:
 
     def update_weights(self, alpha, derivatives, outputs):
         """
-        This method makes one update of weights of the entire network.
+        This method makes one update to weights of the entire network.
         PARAMETERS:
         alpha: learning rate
         derivatives: a list of arrays, each element in the index [i] is a 2d array containing derivatives of the layer i+1
@@ -205,6 +214,37 @@ class BinNeuralNetwork:
 
             # update weights between layer i and layer i+1
             self._weights[i] = W + alpha * (dt.dot(O))
+    
+
+    def update_biases(self, alpha, derivatives):
+        """
+        This method makes one update to biases of the entire network
+        PARAMETERS:
+        The same as update_weights method except outputs
+        """
+        # number of dataset examples
+        T = self._X.shape[0]
+        # an array of ones reshaped to be compatible with the use of matrix multiplication in order to simplify the implementation
+        ones = np.ones((T, 1))
+        # number of layers
+        n = self._number_of_layers
+        for i in range(n):
+            # old biases of the layer i+1
+            b = self._biases[i]
+            # derivative of layer i+1 (transpose)
+            dt = derivatives[i].T
+
+            # update biases of layer i+1
+            self._biases[i] = b + alpha * (dt.dot(ones))
+
+    
+    def train(self, alpha, iter):
+        for _ in tqdm(range(iter)):
+            outputs = self.forward_outputs()
+            derivatives = self.calculate_derivatives(outputs)
+            self.update_weights(alpha, derivatives, outputs)
+            self.update_biases(alpha, derivatives)
+            
 
 
 
@@ -238,28 +278,64 @@ model = BinNeuralNetwork(layers, X, y)
 print("Initial weights:")
 for w in model.weights:
     print(w)
-
-# test forward_outputs
-print("Forward outputs:")
-outputs = model.forward_outputs()
-for o in outputs:
-    print(o)
     print()
 
-# test calculate_derivatives
-print("Derivatives:")
-derivatives = model.calculate_derivatives(outputs)
-for d in derivatives:
-    print(d)
+print("Initial biases:")
+for b in model.biases:
+    print(b)
     print()
 
-# test update_weights
-print("Updated weights:")
-alpha = 0.01
-model.update_weights(alpha, derivatives, outputs)
+# # test forward_outputs
+# print("Forward outputs:")
+# outputs = model.forward_outputs()
+# for o in outputs:
+#     print(o)
+#     print()
+
+# # test calculate_derivatives
+# print("Derivatives:")
+# derivatives = model.calculate_derivatives(outputs)
+# for d in derivatives:
+#     print(d)
+#     print()
+
+# learning rate
+alpha = 0.1
+
+# # test update_weights
+# print("Updated weights:")
+# model.update_weights(alpha, derivatives, outputs)
+# for w in model.weights:
+#     print(w)
+#     print()
+
+# # test update_biases
+# print("Updated biases:")
+# model.update_biases(alpha, derivatives)
+# for b in model.biases:
+#     print(b)
+#     print()
+
+# number of iterations
+iter = 10000
+
+# train the network
+model.train(alpha, iter)
+
+print("Final weights:")
 for w in model.weights:
     print(w)
+    print()
 
+print("Final biases:")
+for b in model.biases:
+    print(b)
+    print()
+
+
+# test the network on the dataset
+predictions = model.forward_propagation(X)
+# print(predictions)
 
 
 
