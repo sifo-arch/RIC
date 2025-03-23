@@ -56,6 +56,14 @@ class BinNeuralNetwork:
         #     print(b)
     
 
+    @property
+    def weights(self):
+        """
+        weights getter
+        """
+        return self._weights
+    
+
     def _sigmoid(self, x):
         """
         sigmoid as activation function
@@ -167,6 +175,39 @@ class BinNeuralNetwork:
         return derivatives
 
 
+    def update_weights(self, alpha, derivatives, outputs):
+        """
+        This method makes one update of weights of the entire network.
+        PARAMETERS:
+        alpha: learning rate
+        derivatives: a list of arrays, each element in the index [i] is a 2d array containing derivatives of the layer i+1
+        outputs:  a list of arrays, each element in index [i] is 2d array containing outputs of layer i+1
+        """
+        # weights between the input and the first layer
+        W = self._weights[0]
+        # derivatives of the first layer (transpose)
+        dt = derivatives[0].T
+        # the dataset (outputs of layer 0)
+        O = self._X
+
+        # update weights between the input and the first layer
+        self._weights[0] = W + alpha * (dt.dot(O))
+
+        # repeat the process for the rest of weights
+        n = self._number_of_layers
+        for i in range(1, n):
+            # weights between layer i and layer i+1
+            W = self._weights[i]
+            # derivatives of layer i+1
+            dt = derivatives[i].T
+            # outputs of layer i (transpose for dimensions compatibility)
+            O = outputs[i - 1].T
+
+            # update weights between layer i and layer i+1
+            self._weights[i] = W + alpha * (dt.dot(O))
+
+
+
 
 
 
@@ -194,6 +235,10 @@ model = BinNeuralNetwork(layers, X, y)
 # print(f"Forward propagation of {xi}:")
 # z_xi = model.forward_propagation(xi)
 
+print("Initial weights:")
+for w in model.weights:
+    print(w)
+
 # test forward_outputs
 print("Forward outputs:")
 outputs = model.forward_outputs()
@@ -207,5 +252,14 @@ derivatives = model.calculate_derivatives(outputs)
 for d in derivatives:
     print(d)
     print()
+
+# test update_weights
+print("Updated weights:")
+alpha = 0.01
+model.update_weights(alpha, derivatives, outputs)
+for w in model.weights:
+    print(w)
+
+
 
 
