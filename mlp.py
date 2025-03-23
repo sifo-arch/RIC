@@ -30,7 +30,7 @@ class BinNeuralNetwork:
         fan_in = X.shape[1]  # the size of input
         fan_out = layers[0]  # the number of neurons of the first hidden layer
         std = np.sqrt(2 / (fan_in + fan_out))  # standard deviation according to Xavier technique
-        W = np.random.normal(0.0, std, (fan_out, fan_in))  # number of neurons = number of lines, number of input = number of columns
+        W = np.random.normal(0.0, std, (fan_out, fan_in))  # number of neurons = number of lines, number of inputs = number of columns
         weights.append(W)
         for i in range(1, layers.size):
             fan_in = layers[i - 1]
@@ -130,6 +130,8 @@ class BinNeuralNetwork:
     def calculate_derivatives(self, outputs):
         """
         This method calculates derivatives of each layer.
+
+        PARAMETERS:
         outputs: a list, each element in index i is the output of layer i+1
         """
         # A list to store derivatives
@@ -150,11 +152,11 @@ class BinNeuralNetwork:
         # Next: Calculate the rest of layers' derivatives
         n = self._number_of_layers
         for i in range(n - 2, -1, -1):
-            # output of layer i
+            # output of layer i+1
             Oi = outputs[i]
             # derivative of the next layer
             nd = derivatives[0]
-            # weights between layer i and i+1
+            # weights between layer i+1 and i+2
             W = self._weights[i + 1]
             # calculate the derivative
             d = (Oi * (1 - Oi)).T * (nd.dot(W))
@@ -168,14 +170,14 @@ class BinNeuralNetwork:
 
 
 
-# Dataset
+# Dataset (XOR)
 X = np.array([
     [0, 0],
     [0, 1],
     [1, 0],
     [1, 1]
 ])
-# Labels
+# Labels (XOR)
 y = np.array([0, 1, 1, 0])
 # Architecture
 layers = np.array([3, 2])
