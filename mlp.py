@@ -80,7 +80,7 @@ class BinNeuralNetwork:
         return 1 / (1 + np.exp(-x))
     
 
-    def forward_propagation(self, X):
+    def forward_propagation(self, X, trace=False):
         """
         This method performs forward propagation on the X argument.
         X could be one datapoint or a set of datapoints.
@@ -94,9 +94,12 @@ class BinNeuralNetwork:
         # calculate potential and activation of the first layer
         potential = W.dot(X.T) + b
         Z = self._sigmoid(potential)
+
         # tracing...
-        print(f"Activations of layer[{1}]:")
-        print(Z)
+        if trace:
+            print(f"Activations of layer[{1}]:")
+            print(Z)
+
         # repeat the process for the rest of layers layers
         for i in range(1, self._number_of_layers):
 
@@ -109,9 +112,10 @@ class BinNeuralNetwork:
             potential = W.dot(Z) + b
             Z = self._sigmoid(potential)
             
-            # tracing
-            print(f"Activations of layer[{i + 1}]:")
-            print(Z)
+            # tracing...
+            if trace:
+                print(f"Activations of layer[{i + 1}]:")
+                print(Z)
         
         # return the output of the last layer (output layer)
         return Z
@@ -239,11 +243,45 @@ class BinNeuralNetwork:
 
     
     def train(self, alpha, iter):
+        """
+        This method is for training the model
+        PARAMETERS (aka HYPER-PARAMETERS):
+        alpha: learning rate
+        iter: number of iterations
+        """
+        
         for _ in tqdm(range(iter)):
+            # feed forward of the dataset with storing output of each layer
             outputs = self.forward_outputs()
+            # calculate derivatives of the current iteration outputs
             derivatives = self.calculate_derivatives(outputs)
+            # update weights
             self.update_weights(alpha, derivatives, outputs)
+            # update biases
             self.update_biases(alpha, derivatives)
+
+    
+    def score(self, X, y):
+        """
+        This method calculates the score of model's predictions compared to real classes
+        PARAMETERS:
+        X: a set of datapoints
+        y: classes
+        """
+        # model predictions as probabilities
+        probabilities = self.forward_propagation(X)
+        # round probabilities to classes (flatten is used because the output of forward_propagation is a 2d array)
+        predictions = np.round(probabilities).flatten()
+        # a counter to track correct predictions
+        percentage = 0
+
+        for pred, real in zip(predictions, y):
+            if pred == real:
+                percentage += 1
+        
+        # return the percentage of correct predictions
+        return percentage / y.size
+
             
 
 
@@ -261,7 +299,7 @@ X = np.array([
 # Labels (XOR)
 y = np.array([0, 1, 1, 0])
 # Architecture
-layers = np.array([3, 2])
+layers = np.array([2])
 # model instantiation
 model = BinNeuralNetwork(layers, X, y)
 
@@ -317,7 +355,7 @@ alpha = 0.1
 #     print()
 
 # number of iterations
-iter = 10000
+iter = 100000
 
 # train the network
 model.train(alpha, iter)
@@ -334,8 +372,13 @@ for b in model.biases:
 
 
 # test the network on the dataset
+print("Predictions of the dataset:")
 predictions = model.forward_propagation(X)
-# print(predictions)
+print(predictions)
+
+# score of the dataset
+X_score = model.score(X, y)
+print(f"Score of the dataset: {X_score}")
 
 
 
