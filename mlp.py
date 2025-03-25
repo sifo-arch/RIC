@@ -288,97 +288,97 @@ class BinNeuralNetwork:
 
 
 
-
-# Dataset (XOR)
-X = np.array([
-    [0, 0],
-    [0, 1],
-    [1, 0],
-    [1, 1]
-])
-# Labels (XOR)
-y = np.array([0, 1, 1, 0])
-# Architecture
-layers = np.array([2])
-# model instantiation
-model = BinNeuralNetwork(layers, X, y)
-
-
-# # test forward propagation on the dataset
-# print("Forward propagation of the dataset:")
-# z_X = model.forward_propagation(X)
-
-# # test forward propagation on a new datapoint
-# xi = np.array([1, 0])
-# print(f"Forward propagation of {xi}:")
-# z_xi = model.forward_propagation(xi)
-
-print("Initial weights:")
-for w in model.weights:
-    print(w)
-    print()
-
-print("Initial biases:")
-for b in model.biases:
-    print(b)
-    print()
-
-# # test forward_outputs
-# print("Forward outputs:")
-# outputs = model.forward_outputs()
-# for o in outputs:
-#     print(o)
-#     print()
-
-# # test calculate_derivatives
-# print("Derivatives:")
-# derivatives = model.calculate_derivatives(outputs)
-# for d in derivatives:
-#     print(d)
-#     print()
-
-# learning rate
-alpha = 0.1
-
-# # test update_weights
-# print("Updated weights:")
-# model.update_weights(alpha, derivatives, outputs)
-# for w in model.weights:
-#     print(w)
-#     print()
-
-# # test update_biases
-# print("Updated biases:")
-# model.update_biases(alpha, derivatives)
-# for b in model.biases:
-#     print(b)
-#     print()
-
-# number of iterations
-iter = 100000
-
-# train the network
-model.train(alpha, iter)
-
-print("Final weights:")
-for w in model.weights:
-    print(w)
-    print()
-
-print("Final biases:")
-for b in model.biases:
-    print(b)
-    print()
+if __name__ == '__main__':
+    # Dataset (XOR)
+    X = np.array([
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 1]
+    ])
+    # Labels (XOR)
+    y = np.array([0, 1, 1, 0])
+    # Architecture
+    layers = np.array([2])
+    # model instantiation
+    model = BinNeuralNetwork(layers, X, y)
 
 
-# test the network on the dataset
-print("Predictions of the dataset:")
-predictions = model.forward_propagation(X)
-print(predictions)
+    # # test forward propagation on the dataset
+    # print("Forward propagation of the dataset:")
+    # z_X = model.forward_propagation(X)
 
-# score of the dataset
-X_score = model.score(X, y)
-print(f"Score of the dataset: {X_score}")
+    # # test forward propagation on a new datapoint
+    # xi = np.array([1, 0])
+    # print(f"Forward propagation of {xi}:")
+    # z_xi = model.forward_propagation(xi)
+
+    print("Initial weights:")
+    for w in model.weights:
+        print(w)
+        print()
+
+    print("Initial biases:")
+    for b in model.biases:
+        print(b)
+        print()
+
+    # # test forward_outputs
+    # print("Forward outputs:")
+    # outputs = model.forward_outputs()
+    # for o in outputs:
+    #     print(o)
+    #     print()
+
+    # # test calculate_derivatives
+    # print("Derivatives:")
+    # derivatives = model.calculate_derivatives(outputs)
+    # for d in derivatives:
+    #     print(d)
+    #     print()
+
+    # learning rate
+    alpha = 0.1
+
+    # # test update_weights
+    # print("Updated weights:")
+    # model.update_weights(alpha, derivatives, outputs)
+    # for w in model.weights:
+    #     print(w)
+    #     print()
+
+    # # test update_biases
+    # print("Updated biases:")
+    # model.update_biases(alpha, derivatives)
+    # for b in model.biases:
+    #     print(b)
+    #     print()
+
+    # number of iterations
+    iter = 100000
+
+    # train the network
+    model.train(alpha, iter)
+
+    print("Final weights:")
+    for w in model.weights:
+        print(w)
+        print()
+
+    print("Final biases:")
+    for b in model.biases:
+        print(b)
+        print()
+
+
+    # test the network on the dataset
+    print("Predictions of the dataset:")
+    predictions = model.forward_propagation(X)
+    print(predictions)
+
+    # score of the dataset
+    X_score = model.score(X, y)
+    print(f"Score of the dataset: {X_score}")
 
 
 
