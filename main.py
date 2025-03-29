@@ -26,19 +26,19 @@ def prepare_dataset(file_path):
             X.append(xi)
             y.append(yi)
         
-        return np.array(X), np.array(y)
+    return np.array(X), np.array(y)
 
 
 # prepare the dataset
 X, y = prepare_dataset(FILE_PATH)
 # model architecture
-architecture = [40, 40]
+architecture = [50, 50, 50]
 # instantiate the model
 model = BinNeuralNetwork(architecture, X, y)
 
 # hyper-parameters
 alpha = 0.01
-iter = 10000
+iter = 100000
 
 # train the model
 model.train(alpha, iter)
