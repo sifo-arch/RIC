@@ -29,16 +29,36 @@ def prepare_dataset(file_path):
     return np.array(X), np.array(y)
 
 
+def normalize_data(X):
+    """
+    This function performs in place normalization of a dataset
+    """
+    # number of columns
+    cols = range(X.shape[1])
+    # an array contains max value of each column
+    max = np.array([np.max(X[:, i]) for i in cols])
+    # an array contains min value of each column
+    min = np.array([np.min(X[:, i]) for i in cols])
+
+    # normalize the data
+    for j in cols:
+        X[:, j] = (X[:, j] - min[j]) / (max[j] - min[j])
+
+
+
+
 # prepare the dataset
 X, y = prepare_dataset(FILE_PATH)
+# normaliza the set of data
+normalize_data(X)
 # model architecture
-architecture = [50, 50, 50]
+architecture = [5, 5, 5, 5, 5]
 # instantiate the model
 model = BinNeuralNetwork(architecture, X, y)
 
 # hyper-parameters
-alpha = 0.01
-iter = 100000
+alpha = 0.1
+iter = 10000
 
 # train the model
 model.train(alpha, iter)
