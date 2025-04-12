@@ -52,13 +52,13 @@ X, y = prepare_dataset(FILE_PATH)
 # normaliza the set of data
 normalize_data(X)
 # model architecture
-architecture = [5, 5, 5, 5, 5]
+architecture = [3, 3]
 # instantiate the model
 model = BinNeuralNetwork(architecture, X, y)
 
 # hyper-parameters
-alpha = 0.1
-iter = 10000
+alpha = 0.0002
+iter = 50000
 
 # train the model
 model.train(alpha, iter)
