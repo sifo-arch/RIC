@@ -240,6 +240,26 @@ class BinNeuralNetwork:
 
             # update biases of layer i+1
             self._biases[i] = b + alpha * (dt.dot(ones))
+    
+
+    def calculate_loss(self, predictions):
+        """
+        This method calculates mean squared error (MSE)
+        between predictions and labels
+        PARAMETERS:
+        predictions: a column vector (shape=(n_points, 1)) of predictions
+        """
+
+        # flatten the array of predictions to be a 1d array
+        pred = predictions.flatten()
+        # labels
+        y = self._y
+        # the size of predictions and y arrays
+        m = pred.size
+        # MSE
+        loss = (1 / m) * np.sum((y - pred)**2)
+
+        return loss
 
     
     def train(self, alpha, iter):
@@ -259,6 +279,12 @@ class BinNeuralNetwork:
             self.update_weights(alpha, derivatives, outputs)
             # update biases
             self.update_biases(alpha, derivatives)
+
+            # track the loss for each K iterations
+            K = 100
+            if _ % K == 0:
+                loss = self.calculate_loss(outputs[-1])
+                print(f"Loss = {loss}")
 
     
     def score(self, X, y):
@@ -280,6 +306,7 @@ class BinNeuralNetwork:
                 percentage += 1
         
         # return the percentage of correct predictions
+        print(f"The number of correct predictions = {percentage}")
         return percentage / y.size
 
             
