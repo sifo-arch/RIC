@@ -262,15 +262,20 @@ class BinNeuralNetwork:
         return loss
 
     
-    def train(self, alpha, iter):
+    def train(self, alpha, iter, track_loss = False):
         """
         This method is for training the model
         PARAMETERS (aka HYPER-PARAMETERS):
         alpha: learning rate
         iter: number of iterations
+        track_loss: if true, then print loss at each K iteration instead of using tqdm
         """
+        if track_loss:
+            ITERABLE = range(iter)
+        else:
+            ITERABLE = tqdm(range(iter))
         
-        for _ in tqdm(range(iter)):
+        for _ in ITERABLE:
             # feed forward of the dataset with storing output of each layer
             outputs = self.forward_outputs()
             # calculate derivatives of the current iteration outputs
@@ -280,11 +285,12 @@ class BinNeuralNetwork:
             # update biases
             self.update_biases(alpha, derivatives)
 
-            # track the loss for each K iterations
-            K = 100
-            if _ % K == 0:
-                loss = self.calculate_loss(outputs[-1])
-                print(f"Loss = {loss}")
+            if track_loss:
+                # track the loss for each K iterations
+                K = 100
+                if _ % K == 0:
+                    loss = self.calculate_loss(outputs[-1])
+                    print(f"Iteration {_}: Loss = {loss}")
 
     
     def score(self, X, y):
@@ -365,7 +371,7 @@ if __name__ == '__main__':
     #     print()
 
     # learning rate
-    alpha = 0.1
+    alpha = 0.2
 
     # # test update_weights
     # print("Updated weights:")
