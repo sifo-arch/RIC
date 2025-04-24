@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from mlp import BinNeuralNetwork
 
 FILE_PATH = "data.txt"
@@ -45,6 +46,51 @@ def normalize_data(X):
         X[:, j] = (X[:, j] - min[j]) / (max[j] - min[j])
 
 
+def filter_predicted_vase(X, predictions):
+    """
+    This function extracts points that are predicted to belong to the vase
+
+    PARAMETERS:
+    X: dataset (points)
+    predictions: array of dataset model predictions
+
+    RETURNS:
+    a 2d array of points that are predicted to belong to the vase
+    """
+    # a list to store points predicted to belong to the vase
+    X_vase = []
+    # for each prediction
+    for i in range(predictions.size):
+        # if prediction is belong to the vase (1)
+        if predictions[i] == 1:
+            # append the corresponding point to the list
+            X_vase.append(X[i])
+    
+    # return the list of point as an array
+    return np.array(X_vase)
+
+
+def plot_predicted_vase(X_vase):
+    """
+    This function makes a 3d plot of points that are belong to the vase (AI assisted)
+    PARAMETERS:
+    X_vase: points that are belong to the vase
+    """
+    # extracts points coordinations
+    x, y, z = X_vase[:, 0], X_vase[:, 1], X_vase[:, 2]
+
+    # 3d scatter plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(x, y, z, c='p', marker='o')
+
+    # axes labels
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+
+    # show the plot
+    plt.show()
 
 
 # prepare the dataset
@@ -63,7 +109,14 @@ iter = 50000
 # train the model
 model.train(alpha, iter)
 
-# model score on the dataset
-score = model.score(X, y)
+# model predictions and score on the dataset
+predictions, score = model.score(X, y)
 print(f"Model score on the dataset: {score}")
+
+# points predicted to belong to the vase
+X_vase = filter_predicted_vase(X, predictions)
+
+# plot X_vase
+plot_predicted_vase(X_vase)
+
 
