@@ -414,7 +414,8 @@ if __name__ == '__main__':
     print(predictions)
 
     # score of the dataset
-    X_score = model.score(X, y)
+    X_pred, X_score = model.score(X, y)
+    print(f"Predictions of tha datset: {X_pred}")
     print(f"Score of the dataset: {X_score}")
 
 
