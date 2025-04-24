@@ -311,9 +311,13 @@ class BinNeuralNetwork:
             if pred == real:
                 percentage += 1
         
-        # return the percentage of correct predictions
+        # display the number of correct predictions
         print(f"The number of correct predictions = {percentage}")
-        return percentage / y.size
+        # calculate accuracy (score)
+        accuracy = percentage / y.size
+
+        # return predictions and score
+        return predictions, accuracy
 
             
 
