@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from mlp import BinNeuralNetwork
 
 FILE_PATH = "data.txt"
+WEIGHTS_FOLDER = "saved_weights"
+WEIGHTS_FILE = "vase.dat"
 
 
 def prepare_dataset(file_path):
@@ -82,7 +84,7 @@ def plot_predicted_vase(X_vase):
     # 3d scatter plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(x, y, z, c='p', marker='o')
+    ax.scatter(x, y, z, c='r', marker='o')
 
     # axes labels
     ax.set_xlabel('X')
@@ -91,6 +93,37 @@ def plot_predicted_vase(X_vase):
 
     # show the plot
     plt.show()
+
+
+def training_procedure(model: BinNeuralNetwork, save_weights=False):
+    """
+    This procedure trains the model, and can save resulted weights
+    PARAMETERS:
+    model: the model
+    save_weights: a boolean, if True weights (resulted from training) will be saved
+    """
+    # hyper-parameters
+    alpha = 0.00035
+    iter = 20000
+
+    # train the model
+    model.train(alpha, iter, track_loss=True)
+
+    # modify hyper-parameters
+    alpha = 0.00028
+    iter = 15000
+    # train the model again
+    model.train(alpha, iter, track_loss=True)
+
+    # modify hyper-parameters
+    alpha = 0.00025
+    iter = 15000
+    # train again
+    model.train(alpha, iter, track_loss=True)
+
+    if save_weights:
+        path = WEIGHTS_FOLDER + "/" + WEIGHTS_FILE
+        model.save_weights(path)
 
 
 # prepare the dataset
@@ -102,12 +135,12 @@ architecture = [3, 3]
 # instantiate the model
 model = BinNeuralNetwork(architecture, X, y)
 
-# hyper-parameters
-alpha = 0.0002
-iter = 50000
+# # train the model and save weights
+# training_procedure(model, save_weights=True)
 
-# train the model
-model.train(alpha, iter)
+# load ready weights
+path = WEIGHTS_FOLDER + "/" + WEIGHTS_FILE
+model.load_weights(path) # 97.76 % accuracy (20000 points)
 
 # model predictions and score on the dataset
 predictions, score = model.score(X, y)
