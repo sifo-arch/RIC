@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+import pickle
 
 
 class BinNeuralNetwork:
@@ -320,12 +321,52 @@ class BinNeuralNetwork:
         return predictions, accuracy
 
             
+    def save_weights(self, file_path):
+        """
+        This method saves the current weights of the model in a binary file.
+        hint: use it after well training the model
+        PARAMETERS:
+        file_path: the path of binary file to which weighs will be saved
+        """
+        # open the binary file in write mode
+        bin_file = open(file_path, mode="wb")
 
+        # weights and biases
+        W = self._weights
+        b = self._biases
+        # put W and b in one object (tuple)
+        weights = (W, b)
 
+        # save wights and biases tuple object in the binary file
+        pickle.dump(weights, bin_file)
+
+        # close the binary file
+        bin_file.close()
+    
+
+    def load_weights(self, file_path):
+        """
+        This method loads weights of the model from a binary file
+        hint: use it to avoid training the model each time
+        PARAMETERS:
+        file_path: the path of the binary file from which wights will be loaded
+        """
+        # open the binary file (auto closed)
+        with open(file_path, mode="rb") as f:
+            # load weights and biases
+            W, b = pickle.load(f)
+        
+        # set weights and biases
+        self._weights = W
+        self._biases = b
 
 
 
 if __name__ == '__main__':
+
+    FOLDER = "saved_weights"
+    FILE = "xor.dat"
+
     # Dataset (XOR)
     X = np.array([
         [0, 0],
@@ -340,83 +381,104 @@ if __name__ == '__main__':
     # model instantiation
     model = BinNeuralNetwork(layers, X, y)
 
+    def test_train(save_weights=False):
+        """
+        A procedure to test training the model
+        PARAMETERS:
+        save_weights: a boolean, if true weights will be saved
+        """
 
-    # # test forward propagation on the dataset
-    # print("Forward propagation of the dataset:")
-    # z_X = model.forward_propagation(X)
+        # # test forward propagation on the dataset
+        # print("Forward propagation of the dataset:")
+        # z_X = model.forward_propagation(X)
 
-    # # test forward propagation on a new datapoint
-    # xi = np.array([1, 0])
-    # print(f"Forward propagation of {xi}:")
-    # z_xi = model.forward_propagation(xi)
+        # # test forward propagation on a new datapoint
+        # xi = np.array([1, 0])
+        # print(f"Forward propagation of {xi}:")
+        # z_xi = model.forward_propagation(xi)
 
-    print("Initial weights:")
-    for w in model.weights:
-        print(w)
-        print()
+        print("Initial weights:")
+        for w in model.weights:
+            print(w)
+            print()
 
-    print("Initial biases:")
-    for b in model.biases:
-        print(b)
-        print()
+        print("Initial biases:")
+        for b in model.biases:
+            print(b)
+            print()
 
-    # # test forward_outputs
-    # print("Forward outputs:")
-    # outputs = model.forward_outputs()
-    # for o in outputs:
-    #     print(o)
-    #     print()
+        # # test forward_outputs
+        # print("Forward outputs:")
+        # outputs = model.forward_outputs()
+        # for o in outputs:
+        #     print(o)
+        #     print()
 
-    # # test calculate_derivatives
-    # print("Derivatives:")
-    # derivatives = model.calculate_derivatives(outputs)
-    # for d in derivatives:
-    #     print(d)
-    #     print()
+        # # test calculate_derivatives
+        # print("Derivatives:")
+        # derivatives = model.calculate_derivatives(outputs)
+        # for d in derivatives:
+        #     print(d)
+        #     print()
 
-    # learning rate
-    alpha = 0.2
+        # learning rate
+        alpha = 0.2
 
-    # # test update_weights
-    # print("Updated weights:")
-    # model.update_weights(alpha, derivatives, outputs)
-    # for w in model.weights:
-    #     print(w)
-    #     print()
+        # # test update_weights
+        # print("Updated weights:")
+        # model.update_weights(alpha, derivatives, outputs)
+        # for w in model.weights:
+        #     print(w)
+        #     print()
 
-    # # test update_biases
-    # print("Updated biases:")
-    # model.update_biases(alpha, derivatives)
-    # for b in model.biases:
-    #     print(b)
-    #     print()
+        # # test update_biases
+        # print("Updated biases:")
+        # model.update_biases(alpha, derivatives)
+        # for b in model.biases:
+        #     print(b)
+        #     print()
 
-    # number of iterations
-    iter = 100000
+        # number of iterations
+        iter = 200000
 
-    # train the network
-    model.train(alpha, iter)
+        # train the network
+        model.train(alpha, iter, track_loss=True)
 
-    print("Final weights:")
-    for w in model.weights:
-        print(w)
-        print()
+        print("Final weights:")
+        for w in model.weights:
+            print(w)
+            print()
 
-    print("Final biases:")
-    for b in model.biases:
-        print(b)
-        print()
+        print("Final biases:")
+        for b in model.biases:
+            print(b)
+            print()
 
+
+        if save_weights:
+            path = FOLDER + "/" + FILE
+            model.save_weights(path)
+    
+
+    def test_ready_model():
+        """
+        A procedure to test loading ready weights 
+        """
+        path = FOLDER + "/" + FILE
+        model.load_weights(path)
+
+
+    # # model will be trained inside this procedure
+    # test_train(save_weights=True)
+
+    # model weights are ready and they will be loaded inside this procedure
+    test_ready_model()
 
     # test the network on the dataset
     print("Predictions of the dataset:")
     predictions = model.forward_propagation(X)
     print(predictions)
-
     # score of the dataset
     X_pred, X_score = model.score(X, y)
     print(f"Predictions of tha datset: {X_pred}")
     print(f"Score of the dataset: {X_score}")
-
-
-
