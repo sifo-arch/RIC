@@ -2,7 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mlp import BinNeuralNetwork
 
+
 FILE_PATH = "data.txt"
+TEST_PATH = "test.txt"
 WEIGHTS_FOLDER = "saved_weights"
 WEIGHTS_FILE = "vase.dat"
 
@@ -103,33 +105,51 @@ def training_procedure(model: BinNeuralNetwork, save_weights=False):
     save_weights: a boolean, if True weights (resulted from training) will be saved
     """
     # hyper-parameters
-    alpha = 0.00035
-    iter = 20000
+    alpha = 0.0002
+    iter = 10000
 
     # train the model
     model.train(alpha, iter, track_loss=True)
 
-    # modify hyper-parameters
-    alpha = 0.00028
-    iter = 15000
-    # train the model again
-    model.train(alpha, iter, track_loss=True)
+    # # modify hyper-parameters
+    # alpha = 0.00028
+    # iter = 15000
+    # # train the model again
+    # model.train(alpha, iter, track_loss=True)
 
-    # modify hyper-parameters
-    alpha = 0.00025
-    iter = 15000
-    # train again
-    model.train(alpha, iter, track_loss=True)
+    # # modify hyper-parameters
+    # alpha = 0.00025
+    # iter = 15000
+    # # train again
+    # model.train(alpha, iter, track_loss=True)
 
     if save_weights:
         path = WEIGHTS_FOLDER + "/" + WEIGHTS_FILE
         model.save_weights(path)
 
 
+def load_test_set(file_path):
+    X = []
+    with open(file_path, mode='r') as f:
+        for raw_line in f.readlines():
+            line_elements = raw_line.split(r" ")
+            line_values = [float(e) for e in line_elements]
+            X.append(line_values)
+    return np.array(X)
+
+
+def write_test_labels(file_path, X_test, predictions):
+    with open(file_path, mode='w') as f:
+        for i in range(X_test.shape[0]):
+            str_line = " ".join([str(e) for e in X_test[i]]) + " " + str(int(predictions[i]))
+            str_line += '\n'
+            f.write(str_line)
+
+
 # prepare the dataset
 X, y = prepare_dataset(FILE_PATH)
 # normaliza the set of data
-normalize_data(X)
+# normalize_data(X)
 # model architecture
 architecture = [3, 3]
 # instantiate the model
@@ -152,4 +172,10 @@ X_vase = filter_predicted_vase(X, predictions)
 # plot X_vase
 plot_predicted_vase(X_vase)
 
-
+# =========================================================
+X_test = load_test_set(TEST_PATH)
+X_test_pred = model.predict(X_test)
+X_test_vase = filter_predicted_vase(X_test, X_test_pred)
+plot_predicted_vase(X_test_vase)
+NEW_TEST_PATH = "new_test.txt"
+write_test_labels(NEW_TEST_PATH, X_test, X_test_pred)
