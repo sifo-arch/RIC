@@ -360,6 +360,13 @@ class BinNeuralNetwork:
         self._weights = W
         self._biases = b
 
+    
+    def predict(self, X):
+        """
+        This method makes predictions on a set of datapoints
+        """
+        probabilities = self.forward_propagation(X)
+        return np.round(probabilities).flatten()
 
 
 if __name__ == '__main__':
